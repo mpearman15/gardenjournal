@@ -104,30 +104,7 @@ async function drawAllEntries() {
 
   render(view(), document.body);
 }
-for (let [dateString, entries] of entriesByDate) {
-  let date = new Date(dateString);
-  let month = date.toLocaleString("default", { month: "long" });
-  let day = date.getDate();
-  let dateText = `${month} ${day}`;
-  if (dateText !== currDate) {
-    console.log(dateText);
-    textSize(32);
-    fill(0);
-    text(dateText, locX, locY);
-    currDate = dateText;
-    locY -= 40;
-  }
 
-  textSize(16);
-  fill(0);
-  entries.forEach((entryData) => {
-    text(`Activity: ${entryData.activity}`, locX, locY-20);
-    text(`Mood: ${entryData.mood}`, locX, locY -40);
-    text(`Note: ${entryData.note}`, locX, locY -60);
-    locY += 60;
-  });
-  locY -= 20;
-}
 
 function leafRight(x, y){
 
