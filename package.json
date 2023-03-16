@@ -8,7 +8,7 @@
     "host": "vite --host",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy": "vite build --base=/gardenprototype/ && gh-pages -d dist"
+    "deploy": "vite build --base=/gardenjournal/ && gh-pages -d dist"
   },
   "dependencies": {
     "firebase": "^9.17.2",
