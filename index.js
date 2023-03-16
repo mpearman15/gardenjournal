@@ -74,33 +74,31 @@ async function drawAllEntries() {
     }
     entriesByDate.get(dateString).push(entryData);
 
-    // let today = new Date(entryData.time);
-
-    // let date = today.getDate();
-
-    // console.log(today.toLocaleString());
-    // console.log(today.getDate());
-    // console.log(today.timeNow());
-
-
-
-
-
-    // let dateTimeElement = document.createElement("p");
-    // dateTimeElement.innerHTML = today.getDate();
-    // document.body.appendChild(dateTimeElement);
-
-
-
-    // locY-= stemHeight;
-    // leaf(locX, locY);
-    // let size = random(50,150);
-      // fill(0);
-      // text("activity: " + entryData.activity, locX, locY);
-      // text("mood: " + entryData.mood, locX, locY+10);
-      // text("note: " + entryData.note, locX, locY+20);
-
   });
+
+  for (let [dateString, entries] of entriesByDate) {
+    let date = new Date(dateString);
+    let month = date.toLocaleString("default", { month: "long" });
+    let day = date.getDate();
+    let dateText = `${month} ${day}`;
+    if (dateText !== currDate) {
+      textSize();
+      fill(0);
+      text(dateText, locX, locY);
+      currDate = dateText;
+      locY -= 40;
+    }
+
+    textSize(16);
+    fill(0);
+    entries.forEach((entryData) => {
+      text(`Activity: ${entryData.activity}`, locX, locY);
+      text(`Mood: ${entryData.mood}`, locX, locY - 20);
+      text(`Note: ${entryData.note}`, locX, locY - 40);
+      locY -= 60;
+    });
+    locY -= 20;
+  }
 
   render(view(), document.body);
 }
