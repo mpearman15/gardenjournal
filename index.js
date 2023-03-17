@@ -2,6 +2,8 @@
 import { initializeApp } from "firebase/app";
 import { html, render } from "lit-html";
 import {
+  doc,
+  getDoc,
   getFirestore,
   collection,
   addDoc,
@@ -42,9 +44,13 @@ window.setup = () => {
   canvas = createCanvas(windowWidth, windowHeight);
 }
 
+window.draw = () => {
+  drawAllEntries();
+
+}
+
 
 async function drawAllEntries() {
-
   entries = [];
 
   const querySnapshot = await getDocs(
@@ -86,14 +92,14 @@ async function drawAllEntries() {
     let day = date.getDate();
     let dateText = `${month} ${day}`;
     let daysInMonth = new Date(date.getFullYear(), date.getMonth()+1, 0).getDate();
-    let datePos = startPos + (windowWidth - (startPos*2)) * (day-1) / (daysInMonth-1);
+    let datePos = startPos + (windowWidth - (startPos*2)) * (day - 1) / (daysInMonth-1);
 
     let locX = datePos;
     let locY = windowHeight-200;
     if (dateText !== currDate) {
       textSize();
       fill(0);
-      text(dateText, locX, locY);
+      text(dateText, locX-25, locY);
       currDate = dateText;
       locY -= 40;
     }
@@ -101,53 +107,75 @@ async function drawAllEntries() {
     fill(0);
 
     entries.forEach((entryData) => {
-      let leaf = isRight ? leafLeft(locX, locY) : leafRight(locX, locY);
-
+      let id = entryData.id;
+      leaf(locX, locY, id);
+      // isRight ? leafLeft(locX, locY, id) : leafRight(locX, locY, id);
       locY -= 30;
     });
     locY -= 20;
   }
-
   render(view(), document.body);
 }
 
-function leafRight(x, y) {
-  isRight = true;
+async function leaf(x, y, id) {
+
+  const entryRef = doc(db, "entries", id);
+  const docSnap = await getDoc(entryRef);
+  let entryData = docSnap.data();
+
+  var leafSize = 30;
+  var leafWidth = leafSize/2;
+  var leafRadius = leafSize/2;
+  var d = dist(x+leafWidth, y, mouseX, mouseY);
+  if (d < leafRadius) {
+    textSize(16);
+    fill(0);
+    text("activity: " + entryData.activity, windowHeight/2, windowWidth/2);
+    text("mood: " + entryData.mood, windowHeight/2, windowWidth/2 - 40);
+    text(entryData.note, windowHeight/2, windowWidth/2 - 80);
+    fill(255, 204, 0);
+  } else {
+    fill(45,90,90);
+  }
+  //draw leaves
+  noStroke();
+  if (isRight) {
+    ellipse(x+leafWidth,y, leafSize, leafWidth);
+    isRight = false;
+  } else {
+    ellipse(x-leafWidth,y, leafSize, leafWidth);
+    isRight = true;
+  }
   //draw the stem
   stroke(45,90,90);
   fill(45,90,90);
   strokeWeight(3);
   line(x,y, x, y+stemHeight);
-
-  var leafSize = 30;
-  var leafWidth = leafSize/2;
-  //draw leaves
-  noStroke();
-  ellipse(x+leafWidth,y, leafSize, leafWidth);
 }
 
-function leafLeft(x,y) {
-  isRight = false;
-  //draw the stem
-  stroke(45,90,90);
-  fill(45,90,90);
-  strokeWeight(3);
-  line(x,y, x, y+stemHeight);
+// async function leafLeft(x,y, id) {
+//   isRight = false;
 
-  var leafSize = 30;
-  var leafWidth = leafSize/2;
-  //draw leaves
-  noStroke();
-  ellipse(x-leafWidth,y, leafSize, leafWidth);
-}
+//   //draw the stem
+//   stroke(45,90,90);
+//   fill(45,90,90);
+//   strokeWeight(3);
+//   line(x,y, x, y+stemHeight);
 
-drawAllEntries();
+//   var leafSize = 30;
+//   var leafWidth = leafSize/2;
+//   //draw leaves
+//   noStroke();
+//   ellipse(x-leafWidth,y, leafSize, leafWidth);
+// }
+
+// drawAllEntries();
 
 async function addEntry(data) {
   console.log("adding entry to database");
   try {
     const docRef = await addDoc(collection(db, "entries"), data);
-    const entryId = docRef.id; // get the unique ID from Firebase
+    const entryId = docRef.id;
     data.id = entryId;
     await drawAllEntries();
     render(view(), document.body);
