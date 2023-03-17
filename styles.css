@@ -10,11 +10,6 @@ body {
   margin: 100;
 }
 
-.page-container {
-  width: 60%;
-  margin: auto;
-}
-
 p {
   font-size: 1.5em;
 }
@@ -24,7 +19,6 @@ h1 {
   margin-bottom: 0%;
 }
 .popup-overlay {
-
   text-align: left;
   color:black;
   position: fixed;
