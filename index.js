@@ -20,21 +20,22 @@ import {
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   //this is the old config
-  apiKey: "AIzaSyAIS7tpssHcPojfXAoGtEUDlpQfrAUaTMM",
-  authDomain: "garden-journal-146bd.firebaseapp.com",
-  projectId: "garden-journal-146bd",
-  storageBucket: "garden-journal-146bd.appspot.com",
-  messagingSenderId: "827802375183",
-  appId: "1:827802375183:web:fbbf6497532ad8a8427f7a",
-  measurementId: "G-FC93M6D38R"
+  // apiKey: "AIzaSyAIS7tpssHcPojfXAoGtEUDlpQfrAUaTMM",
+  // authDomain: "garden-journal-146bd.firebaseapp.com",
+  // projectId: "garden-journal-146bd",
+  // storageBucket: "garden-journal-146bd.appspot.com",
+  // messagingSenderId: "827802375183",
+  // appId: "1:827802375183:web:fbbf6497532ad8a8427f7a",
+  // measurementId: "G-FC93M6D38R"
 
-  // apiKey: "AIzaSyCN5XomXshqw7lywF9RIpqSknlm80_Fdjk",
-  // authDomain: "gardenjournal2-bd318.firebaseapp.com",
-  // projectId: "gardenjournal2-bd318",
-  // storageBucket: "gardenjournal2-bd318.appspot.com",
-  // messagingSenderId: "1053214686112",
-  // appId: "1:1053214686112:web:a0703de0d3987e06b082c5",
-  // measurementId: "G-HXTWQYDWW0"
+  // this is the new config
+  apiKey: "AIzaSyCN5XomXshqw7lywF9RIpqSknlm80_Fdjk",
+  authDomain: "gardenjournal2-bd318.firebaseapp.com",
+  projectId: "gardenjournal2-bd318",
+  storageBucket: "gardenjournal2-bd318.appspot.com",
+  messagingSenderId: "1053214686112",
+  appId: "1:1053214686112:web:a0703de0d3987e06b082c5",
+  measurementId: "G-HXTWQYDWW0"
 };
 
 // Initialize Firebase
