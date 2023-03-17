@@ -50,17 +50,20 @@ let canvas;
 let stemHeight = 30;
 let startPos = 30;
 let isRight = false;
+let entriesByDate;
+let currDate;
 window.setup = () => {
   canvas = createCanvas(windowWidth, windowHeight);
 }
 
 window.draw = () => {
-  drawAllEntries();
+  drawAllEntries(entriesByDate);
 
 }
 
-async function drawAllEntries() {
+async function queryDocs() {
   entries = [];
+  entriesByDate = new Map();
 
   const querySnapshot = await getDocs(
     query(entryRef, orderBy("time", "desc"))
@@ -73,15 +76,11 @@ async function drawAllEntries() {
   }
   background(255);
 
-  let currDate = null;
-
   // formatting time
   Date.prototype.timeNow = function() {
     return ((this.getHours() < 10)?"0":"") + ((this.getHours()>12)?(this.getHours()-12):this.getHours())
     +":"+ ((this.getMinutes() < 10)?"0":"") + this.getMinutes() + ((this.getHours()>12)?(' PM'):' AM');
   };
-
-  let entriesByDate = new Map();
 
   querySnapshot.forEach((doc) => {
     let entryData = doc.data();
@@ -93,6 +92,13 @@ async function drawAllEntries() {
     }
     entriesByDate.get(dateString).push(entryData);
   });
+  return entriesByDate;
+}
+
+queryDocs();
+
+async function drawAllEntries(entriesByDate) {
+  currDate = null;
 
   for (let [dateString, entries] of entriesByDate) {
     // retrieving date information and setting canvas based on month days
@@ -106,17 +112,17 @@ async function drawAllEntries() {
     let locX = datePos;
     let locY = windowHeight-200;
     if (dateText !== currDate) {
-      textSize();
+      noStroke();
+      textSize(16);
       fill(0);
       text(dateText, locX-25, locY);
       currDate = dateText;
       locY -= 40;
     }
-    textSize(16);
-    fill(0);
 
     entries.forEach((entryData) => {
       let id = entryData.id;
+      // console.log(entryData.activity);
       leaf(locX, locY, id);
       // isRight ? leafLeft(locX, locY, id) : leafRight(locX, locY, id);
       locY -= 30;
@@ -127,10 +133,10 @@ async function drawAllEntries() {
 }
 
 async function leaf(x, y, id) {
-  const entryRef = doc(db, "entries", id);
-  const docSnap = await getDoc(entryRef);
-  let entryData = docSnap.data();
-
+  const idRef = doc(db, "entries", id);
+  const docSnap = await getDoc(idRef);
+  let idData = docSnap.data();
+  console.log(idData.activity);
   var leafSize = 30;
   var leafWidth = leafSize/2;
   var leafRadius = leafSize/2;
@@ -138,9 +144,9 @@ async function leaf(x, y, id) {
   if (d < leafRadius) {
     textSize(16);
     fill(0);
-    text("activity: " + entryData.activity, windowHeight/2, windowWidth/2);
-    text("mood: " + entryData.mood, windowHeight/2, windowWidth/2 - 40);
-    text(entryData.note, windowHeight/2, windowWidth/2 - 80);
+    text("activity: " + idData.activity, windowHeight/2, windowWidth/2);
+    text("mood: " + idData.mood, windowHeight/2, windowWidth/2 - 40);
+    text(idData.note, windowHeight/2, windowWidth/2 - 80);
     fill(255, 204, 0);
   } else {
     fill(45,90,90);
@@ -161,7 +167,7 @@ async function leaf(x, y, id) {
   line(x,y, x, y+stemHeight);
 }
 
-drawAllEntries();
+// drawAllEntries();
 
 async function addEntry(data) {
   console.log("adding entry to database");
@@ -188,7 +194,7 @@ function popup() {
     };
     console.log(data);
     addEntry(data);
-    render(view(), document.body);
+    // render(view(), document.body);
   };
   return html`
     <div class="popup-overlay">
