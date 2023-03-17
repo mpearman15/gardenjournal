@@ -151,22 +151,6 @@ async function leaf(x, y, id) {
   line(x,y, x, y+stemHeight);
 }
 
-// async function leafLeft(x,y, id) {
-//   isRight = false;
-
-//   //draw the stem
-//   stroke(45,90,90);
-//   fill(45,90,90);
-//   strokeWeight(3);
-//   line(x,y, x, y+stemHeight);
-
-//   var leafSize = 30;
-//   var leafWidth = leafSize/2;
-//   //draw leaves
-//   noStroke();
-//   ellipse(x-leafWidth,y, leafSize, leafWidth);
-// }
-
 // drawAllEntries();
 
 async function addEntry(data) {
@@ -194,6 +178,7 @@ function popup() {
     };
     console.log(data);
     addEntry(data);
+    render(view(), document.body);
   };
   return html`
     <div class="popup-overlay">
@@ -232,7 +217,7 @@ function logEntry() {
 function view() {
   return html`
     <h1>garden journal</h1>
-    <p> welcome! add in your entry :) </p>
+    <p> welcome! add in your entry, and then <br> refresh the page to see your plant grow!</p>
     <button class="button" @click=${logEntry}> Log Entry! </button>
     <div id=canvas-container> </div>
   `;

@@ -3,7 +3,7 @@
 }
 
 body {
-  background-color: #F8F6E7;
+  background-color: #FBFBFB;
   font-family: 'Playfair Display', serif;
   color: #588157;
   text-align: center;
@@ -16,11 +16,12 @@ body {
 }
 
 p {
-  font-size: 2em;
+  font-size: 1.5em;
 }
 
 h1 {
   font-size: 5em;
+  margin-bottom: 0%;
 }
 .popup-overlay {
 
