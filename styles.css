@@ -3,10 +3,29 @@
 }
 
 body {
+  background-color: #F8F6E7;
+  font-family: 'Playfair Display', serif;
+  color: #588157;
+  text-align: center;
   margin: 100;
 }
 
+.page-container {
+  width: 60%;
+  margin: auto;
+}
+
+p {
+  font-size: 2em;
+}
+
+h1 {
+  font-size: 5em;
+}
 .popup-overlay {
+
+  text-align: left;
+  color:black;
   position: fixed;
   top: 0;
   left: 0;
@@ -17,6 +36,9 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.popup-overlay p {
+  font-size: 1.5em;
 }
 
 .popup-container {
@@ -41,20 +63,21 @@ body {
   align-self: flex-end;
   padding: 0.5rem;
   border: none;
-  background-color: grey;
-  color: white;
+  background-color: white;
+  color: #588157;
   cursor: pointer;
 }
 
 button {
   padding: 10px 20px;
-  background-color: #f0f0f0;
+  background-color: #588157;
+  color:white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
 button:hover {
-  background-color: #e0e0e0;
+  background-color: #a3b18a;
 }
 

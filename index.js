@@ -49,7 +49,6 @@ window.draw = () => {
 
 }
 
-
 async function drawAllEntries() {
   entries = [];
 
@@ -118,7 +117,6 @@ async function drawAllEntries() {
 }
 
 async function leaf(x, y, id) {
-
   const entryRef = doc(db, "entries", id);
   const docSnap = await getDoc(entryRef);
   let entryData = docSnap.data();
