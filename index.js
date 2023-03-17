@@ -33,11 +33,16 @@ const db = getFirestore(app);
 let entries = [];
 const entryRef = collection(db, "entries");
 
+// creating canvas and initializing things in it
 let canvas;
-var stemHeight = 40;
+let stemHeight = 30;
+let startPos = 30;
+let isRight = false;
 window.setup = () => {
   canvas = createCanvas(windowWidth, windowHeight);
 }
+
+
 async function drawAllEntries() {
 
   entries = [];
@@ -52,12 +57,10 @@ async function drawAllEntries() {
     canvas.parent(container);
   }
   background(255);
-  let locX = windowWidth/2;
-  let locY = windowHeight-200;
-  let currDate;
 
+  let currDate = null;
 
-  // to get the current local time
+  // formatting time
   Date.prototype.timeNow = function() {
     return ((this.getHours() < 10)?"0":"") + ((this.getHours()>12)?(this.getHours()-12):this.getHours())
     +":"+ ((this.getMinutes() < 10)?"0":"") + this.getMinutes() + ((this.getHours()>12)?(' PM'):' AM');
@@ -67,20 +70,26 @@ async function drawAllEntries() {
 
   querySnapshot.forEach((doc) => {
     let entryData = doc.data();
+    entryData.id = doc.id;
     let date = new Date(entryData.time);
     let dateString = date.toLocaleDateString();
     if (!entriesByDate.has(dateString)) {
       entriesByDate.set(dateString, []);
     }
     entriesByDate.get(dateString).push(entryData);
-
   });
 
   for (let [dateString, entries] of entriesByDate) {
+    // retrieving date information and setting canvas based on month days
     let date = new Date(dateString);
     let month = date.toLocaleString("default", { month: "long" });
     let day = date.getDate();
     let dateText = `${month} ${day}`;
+    let daysInMonth = new Date(date.getFullYear(), date.getMonth()+1, 0).getDate();
+    let datePos = startPos + (windowWidth - (startPos*2)) * (day-1) / (daysInMonth-1);
+
+    let locX = datePos;
+    let locY = windowHeight-200;
     if (dateText !== currDate) {
       textSize();
       fill(0);
@@ -88,14 +97,13 @@ async function drawAllEntries() {
       currDate = dateText;
       locY -= 40;
     }
-
     textSize(16);
     fill(0);
+
     entries.forEach((entryData) => {
-      text(`Activity: ${entryData.activity}`, locX, locY);
-      text(`Mood: ${entryData.mood}`, locX, locY - 20);
-      text(`Note: ${entryData.note}`, locX, locY - 40);
-      locY -= 60;
+      let leaf = isRight ? leafLeft(locX, locY) : leafRight(locX, locY);
+
+      locY -= 30;
     });
     locY -= 20;
   }
@@ -103,9 +111,8 @@ async function drawAllEntries() {
   render(view(), document.body);
 }
 
-
-function leafRight(x, y){
-
+function leafRight(x, y) {
+  isRight = true;
   //draw the stem
   stroke(45,90,90);
   fill(45,90,90);
@@ -120,36 +127,28 @@ function leafRight(x, y){
 }
 
 function leafLeft(x,y) {
-    //draw the stem
-    stroke(45,90,90);
-    fill(45,90,90);
-    strokeWeight(3);
-    line(x,y, x, y+stemHeight);
+  isRight = false;
+  //draw the stem
+  stroke(45,90,90);
+  fill(45,90,90);
+  strokeWeight(3);
+  line(x,y, x, y+stemHeight);
 
-    var leafSize = 30;
-    var leafWidth = leafSize/2;
-    //draw leaves
-    noStroke();
-    ellipse(x+leafWidth,y, leafSize, leafWidth);
+  var leafSize = 30;
+  var leafWidth = leafSize/2;
+  //draw leaves
+  noStroke();
+  ellipse(x-leafWidth,y, leafSize, leafWidth);
 }
 
 drawAllEntries();
-
-onSnapshot(
-  collection(db, "entries"),
-  (snapshot) => {
-    console.log("snap", snapshot);
-    drawAllEntries();
-  },
-  (error) => {
-    console.error(error);
-  }
-);
 
 async function addEntry(data) {
   console.log("adding entry to database");
   try {
     const docRef = await addDoc(collection(db, "entries"), data);
+    const entryId = docRef.id; // get the unique ID from Firebase
+    data.id = entryId;
     await drawAllEntries();
     render(view(), document.body);
   } catch (e) {
@@ -210,7 +209,6 @@ function view() {
     <p> welcome! add in your entry :) </p>
     <button class="button" @click=${logEntry}> Log Entry! </button>
     <div id=canvas-container> </div>
-
   `;
 }
 
